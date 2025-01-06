@@ -35,7 +35,7 @@ class ScanLog(models.Model):
                                        choices=tuple(map(lambda x: (bool(x[0]), x[1]), ScanResult.choices)))
 
     # Manager
-    worker = models.ForeignKey('Worker', on_delete=models.PROTECT, related_name='scanlog', null=True)
+    worker = models.ForeignKey('Worker', on_delete=models.SET_DEFAULT, related_name='scanlog', null=True, default=None)
 
 
     class Meta:

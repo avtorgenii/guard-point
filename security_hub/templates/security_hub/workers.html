@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center flex-grow-1">Workers</h1>
+        <a href="/add_worker" class="btn btn-outline-primary">Add Worker</a>
+    </div>
+
+    <!-- Workers Table -->
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Last Name</th>
+                        <th>Card</th>
+                        <th>Created at</th>
+                        <th>Last Scan Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for worker in workers %}
+                    <tr>
+                        <td>{{ worker.id }}</td>
+                        <td>{{ worker.name }}</td>
+                        <td>{{ worker.surname }}</td>
+                        <td>[{{ worker.card }}]</td>
+                        <td>{{ worker.created_at|date:"Y-m-d" }}</td>
+                        <td>{{ worker.scanlog.latest_scan_date|default:"N/A" }}</td>
+                        <td>
+                            <a href="/delete_worker/{{ worker.id }}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-3">
+        <nav>
+            <ul class="pagination">
+                {% if workers.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ workers.previous_page_number }}">&laquo;</a>
+                </li>
+                {% endif %}
+                {% for num in workers.paginator.page_range %}
+                <li class="page-item {% if workers.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if workers.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ workers.next_page_number }}">&raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}
