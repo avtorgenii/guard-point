@@ -1,7 +1,11 @@
 from django.contrib.auth.decorators import permission_required, login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
 
+from security_hub.forms import AddWorkerForm
 from security_hub.models import ScanLog, Worker
 
 
@@ -27,6 +31,16 @@ def delete_worker(request, w_id):
     except Worker.DoesNotExist:
         pass
     return redirect(workers)
+
+
+class AddWorker(LoginRequiredMixin, CreateView): # form is being sent to template via `form` key
+    form_class = AddWorkerForm
+    template_name = 'security_hub/add_worker.html'
+    success_url = reverse_lazy('workers')
+    title_page = "Add worker"
+
+    def form_valid(self, form): # called when valid form data has been POSTed
+        return super().form_valid(form)
 
 
 def page_not_found(request, exception):
