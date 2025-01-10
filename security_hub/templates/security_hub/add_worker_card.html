@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-5" style="max-width: 600px;">
+        <h1 class="text-center mb-4">Worker Card Registration</h1>
+
+        <div class="card p-4 shadow-sm">
+            <!-- Worker Info -->
+            <div class="mb-4">
+                <h5 class="text-muted mb-3">Worker Information</h5>
+                <div class="row">
+                    <div class="col-4">
+                        <p class="text-muted mb-1">Worker ID:</p>
+                        <p class="fw-bold">{{ w_id }}</p>
+                    </div>
+                    <div class="col-8">
+                        <p class="text-muted mb-1">Full Name:</p>
+                        <p class="fw-bold">{{ full_name }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Status -->
+            <div class="mb-4">
+                <h5 class="text-muted mb-3">Card Status</h5>
+                <div id="card-status" class="alert alert-info d-flex justify-content-center align-items-center" role="alert">
+                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                        <span class="visually-hidden"></span>
+                    </div>
+                    <p class="mb-0">Waiting for card to be scanned...</p>
+                </div>
+            </div>
+
+
+            <!-- Navigation Buttons -->
+            <div id="nav-button" class="d-grid gap-2">
+                <a href="{% url 'worker_card' w_id %}" class="btn btn-danger">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    // JavaScript for polling the card status
+    const workerId = {{ w_id }};
+    const cardChangeId = {{ card_change.id }};
+
+    // Function to check card status
+    function checkCardStatus() {
+        fetch(`/api/check_card_status/${cardChangeId}/`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                if (data.card_change_in_progress) {
+                    // Card change is still in progress, keep showing the spinner
+                    document.getElementById('card-status').innerHTML = `
+                        <div class="spinner-border spinner-border-sm me-2" role="status">
+                        <span class="visually-hidden"></span>
+                    </div>
+                    <p class="mb-0">Waiting for card to be scanned...</p>
+                    `;
+                } else {
+                    // Card change is complete, update UI accordingly
+                    document.getElementById('card-status').innerHTML = `
+                        <div class="text-center text-success">
+                        <p class="mb-0">Card successfully registered!</p>
+                        <p>Card ID: ${data.card}</p>
+                    </div>
+                    `;
+
+                    document.getElementById('nav-button').innerHTML = `
+                        <a href="{% url 'worker_card' w_id %}" class="btn btn-primary">Back</a>
+                    `;
+
+                }
+            })
+            .catch(error => {
+                console.error('Error checking card status:', error);
+            });
+    }
+
+    // Start checking the status every second
+    setInterval(checkCardStatus, 1000);
+</script>
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

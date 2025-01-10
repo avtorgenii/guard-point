@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-5" style="max-width: 600px;">
+        <h1 class="text-center mb-4">Worker Card</h1>
+
+        <div class="card p-4 shadow-sm">
+            <!-- Worker Info -->
+            <div class="mb-4">
+                <h5 class="text-muted mb-3">Worker Information</h5>
+                <div class="row">
+                    <div class="col-4">
+                        <p class="text-muted mb-1">Worker ID:</p>
+                        <p class="fw-bold">{{ w_id }}</p>
+                    </div>
+                    <div class="col-8">
+                        <p class="text-muted mb-1">Full Name:</p>
+                        <p class="fw-bold">{{ full_name }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Status -->
+            <div class="mb-4">
+                <h5 class="text-muted mb-3">Card Status</h5>
+                {% if not card %}
+                    <div class="alert alert-danger" role="alert">
+                        <h6 class="alert-heading mb-1">No card registered</h6>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success" role="alert">
+                        <h6 class="alert-heading mb-1">Card Successfully Registered</h6>
+                        <p class="mb-0">Card ID: [{{ card }}]</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="d-grid gap-2">
+                <a href="{% url 'add_worker_card' w_id %}" class="btn btn-outline-primary">
+                    {% if card %}
+                        Register Different Card
+                    {% else %}
+                        Register Card
+                    {% endif %}
+                </a>
+                <a href="{% url 'workers' %}" class="btn btn-primary">Back to Workers List</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

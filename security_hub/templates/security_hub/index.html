@@ -12,7 +12,6 @@
                     {% csrf_token %}
                     <button type="submit" class="btn btn-outline-danger">Log Out</button>
                 </form>
-
             </div>
         </div>
 
@@ -22,54 +21,36 @@
                 <h3>Scan Log</h3>
             </div>
             <div class="card-body">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>Scan Id</th>
-                        <th>Card</th>
-                        <th>Person</th>
-                        <th>Timestamp</th>
-                        <th>Type</th>
-                        <th>Result</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for log in scan_logs %}
+                <!-- Make table responsive -->
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
                         <tr>
-                            <td>{{ log.pk }}</td>
-                            <td>[{{ log.card }}]</td>
-                            <td>{{ log.worker.name }} {{ log.worker.surname }}</td>
-                            <td>{{ log.timestamp }}</td>
-                            <td>{{ log.scan_type }}</td>
-                            <td>{{ log.scan_result }}</td>
+                            <th>Scan Id</th>
+                            <th>Card</th>
+                            <th>Person</th>
+                            <th>Timestamp</th>
+                            <th>Type</th>
+                            <th>Result</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for log in scan_logs %}
+                            <tr>
+                                <td>{{ log.pk }}</td>
+                                <td>[{{ log.card }}]</td>
+                                <td>{{ log.worker_full_name }}</td>
+                                <td>{{ log.timestamp }}</td>
+                                <td>{{ log.get_scan_type_display }}</td>
+                                <td class="{% if log.scan_result == 1 %}text-success{% else %}text-danger{% endif %}">
+                                    {{ log.get_scan_result_display }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-
-        <!-- Pagination -->
-        <div class="d-flex justify-content-center mt-3">
-            <nav>
-                <ul class="pagination">
-                    {% if scan_logs.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ scan_logs.previous_page_number }}">&laquo;</a>
-                        </li>
-                    {% endif %}
-                    {% for num in scan_logs.paginator.page_range %}
-                        <li class="page-item {% if scan_logs.number == num %}active{% endif %}">
-                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                        </li>
-                    {% endfor %}
-                    {% if scan_logs.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ scan_logs.next_page_number }}">&raquo;</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
         </div>
     </div>
 {% endblock %}
